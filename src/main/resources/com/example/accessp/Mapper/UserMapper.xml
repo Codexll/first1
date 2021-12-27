@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.accessp.Mapper.UserMapper">
+    <resultMap id="user" type="Access_Control_Device">
+        <id property="id" column="id"></id>
+        <result property="principal" column="principal"></result>
+        <result property="supplier" column="supplier"></result>
+        <result property="brand" column="brand"></result>
+        <result property="status" column="status"></result>
+        <result property="add_Time" column="add_time"></result>
+        <association property="buiding" javaType="Buiding">
+            <id property="id" column="id"></id>
+            <result property="name" column="name"></result>
+        </association>
+
+    </resultMap>
+<select id="all" resultMap="user">
+    SELECT a.id, a.principal,a.supplier,a.brand,b.name,a.status,a.add_time FROM access_control_device a,buiding b where a.hospital_id=b.id
+</select>
+    <update id="update" parameterType="Long">
+        UPDATE access_control_device
+        <set>
+            <if test="status!=0">
+                status=0 where id=#{id}
+            </if>
+            <if test="status==0">
+                status=1 where id=#{id}
+            </if>
+        </set>
+    </update>
+    <select id="getbyname" resultType="Buiding">
+        SELECT * FROM buiding
+    </select>
+</mapper>

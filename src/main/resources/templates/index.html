@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript" th:src="@{/js/jquery-1.12.4.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            type:"GET",
+            url:"/user/getbyname",
+            dataType:"json",
+            success:function (data) {
+                $("#a").append(data[0].name)
+                $("#b").append(data[1].name)
+                $("#c").append(data[2].name)
+            }
+
+        })
+    })
+    function update(id,status) {
+        var a=null;
+        if(status==0)
+        {
+            a="启用";
+        }
+        else
+        {
+            a="停用";
+        }
+        var b=confirm("您确定要"+a+"门禁卡吗？")
+        if (b)
+        {
+             $.ajax({
+                 type:"GET",
+                 url:"/user/update?id="+id+"&status="+status,
+                 dataType:"json",
+                 success:function (data) {
+                     alert(data)
+                      if (data=="true")
+                      {
+                          location.href="/user/all";
+                      }
+                 }
+
+             })
+        }
+
+    }
+</script>
+
+<table border="1">
+    <form>
+        <select id="select">
+            <option value="0">请选择</option>
+            <option value="1" id="a"></option>
+            <option value="2" id="b"></option>
+            <option value="3" id="c"></option>
+        </select>
+    <tr>
+        <td>负责人</td>
+        <td>供货商</td>
+        <td>品牌</td>
+        <td>所属楼宇</td>
+        <td>安装日期</td>
+        <td>运行状态</td>
+        <td>操作</td>
+    </tr>
+    <tr th:each="list:${list}">
+        <td th:text="${list.id}" hidden></td>
+        <td th:text="${list.principal}"></td>
+        <td th:text="${list.supplier}"></td>
+        <td th:text="${list.brand}"></td>
+        <td th:text="${list.buiding.name}"></td>
+        <td th:text="${list.add_Time}"></td>
+        <!--<td th:text="${list.status}"></td>-->
+        <td th:if="${list.status} eq '0'">停用</td>
+        <td th:if="${list.status} eq '1'">启用</td>
+        <td th:if="${list.status} eq '0'"><a href="#" th:onclick="'javascript:update(\''+${list.id}+'\',\''+0+'\')'">启用</a></td>
+        <td th:if="${list.status} eq '1'"><a href="#" th:onclick="'javascript:update(\''+${list.id}+'\',\''+1+'\')'">停用</a></td>
+    </tr>
+    </form>
+</table>
+
+</body>
+</html>
